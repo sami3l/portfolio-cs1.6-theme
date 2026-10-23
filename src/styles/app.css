@@ -268,6 +268,11 @@ kbd {
     display: none;
   }
 
+  /* windows are full-screen here, so keep the feed clear of their title bar and close button */
+  .killfeed {
+    top: 60px;
+  }
+
   .bg__shade {
     background: linear-gradient(90deg, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.45));
   }
