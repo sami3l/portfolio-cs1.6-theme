@@ -20,10 +20,12 @@ export function useHotkeys() {
 
     const onKeyDown = (e: KeyboardEvent) => {
       const s = stateRef.current;
-      if (s.view !== 'game' || e.ctrlKey || e.metaKey || e.altKey) return;
+      if ((s.view !== 'game' && s.view !== 'play') || e.ctrlKey || e.metaKey || e.altKey) return;
 
       if (e.code === 'Backquote' || e.key === '`' || e.key === '~' || e.key === '²') {
         e.preventDefault();
+        // In Play mode, free the mouse so the console can be typed in.
+        if (document.pointerLockElement) document.exitPointerLock();
         actions.toggle('console');
         return;
       }
@@ -41,7 +43,8 @@ export function useHotkeys() {
         return;
       }
       if (isTyping(e.target)) return;
-      if (e.key.toLowerCase() === 'b' && !e.repeat) actions.open('skills');
+      // In Play mode, B only works in the buy zone; PlayMode handles it.
+      if (s.view === 'game' && e.key.toLowerCase() === 'b' && !e.repeat) actions.open('skills');
     };
 
     const onKeyUp = (e: KeyboardEvent) => {

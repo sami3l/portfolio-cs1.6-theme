@@ -51,7 +51,9 @@ function Game() {
         <Suspense fallback={<p className="play__loading">Loading de_career…</p>}>
           <PlayMode />
         </Suspense>
+        <WindowLayer />
         <KillFeed />
+        {state.connecting && <ConnectLoading />}
       </div>
     );
   }

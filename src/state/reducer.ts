@@ -19,12 +19,15 @@ export type Action =
 const ROUTABLE: WindowId[] = ['about', 'projects', 'project', 'skills', 'scoreboard', 'options'];
 export const isRoutable = (id: WindowId) => ROUTABLE.includes(id);
 
+/** Windows open over Play mode without leaving it; from any other view they open in the menu. */
+const stayIn = (view: View): View => (view === 'play' ? 'play' : 'game');
+
 const withTop = (stack: WindowId[], id: WindowId) => [...stack.filter((w) => w !== id), id];
 
 export function reducer(state: State, action: Action): State {
   switch (action.type) {
     case 'open':
-      return { ...state, view: 'game', stack: withTop(state.stack, action.id) };
+      return { ...state, view: stayIn(state.view), stack: withTop(state.stack, action.id) };
     case 'close':
       return { ...state, stack: state.stack.filter((w) => w !== action.id) };
     case 'toggle':
@@ -36,7 +39,7 @@ export function reducer(state: State, action: Action): State {
     case 'openProject':
       return {
         ...state,
-        view: 'game',
+        view: stayIn(state.view),
         connecting: null,
         projectId: action.projectId,
         stack: withTop(state.stack, 'project'),

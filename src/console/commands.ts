@@ -1,6 +1,7 @@
 import { portfolio } from '../data/portfolio';
 import type { Actions, State, WindowId } from '../state/context';
 import { trackEvent } from '../analytics';
+import { downloadFile } from '../utils/download';
 import { asset, prettyUrl } from '../utils/format';
 
 export interface Line {
@@ -39,10 +40,7 @@ const downloadResume = (lang: string, ctx: CommandContext) => {
     ctx.print({ text: `Usage: cv <${contact.resumes.map((r) => r.lang.toLowerCase()).join('|')}>`, kind: 'error' });
     return;
   }
-  const a = document.createElement('a');
-  a.href = asset(file.href);
-  a.download = file.filename;
-  a.click();
+  downloadFile(asset(file.href), file.filename);
   trackEvent(`download: ${file.filename}`);
   ctx.print(`Downloading ${file.filename}…`);
   ctx.actions.kill({ killer: ctx.state.settings.playerName, weapon: 'sniper', victim: `CV_${file.lang}.pdf`, headshot: true });

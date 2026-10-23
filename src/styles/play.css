@@ -86,3 +86,53 @@
     height: auto !important;
   }
 }
+
+/* ---------- Play HUD ---------- */
+
+.play__prompt,
+.play__flash {
+  position: absolute;
+  top: calc(50% + 48px);
+  left: 50%;
+  margin: 0;
+  padding: 4px 12px;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.45);
+  color: #f2e6c8;
+  font: 15px var(--font-ui);
+  text-shadow: 0 1px 2px #000;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.play__flash {
+  top: calc(50% + 84px);
+  color: var(--t);
+}
+
+.play__prompt kbd {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* CS-style buy-zone icon, bottom left above the hint */
+.play__buyzone {
+  position: absolute;
+  bottom: 40px;
+  left: 16px;
+  margin: 0;
+  color: #7dff5a;
+  font: 16px var(--font-hud);
+  text-shadow: 0 1px 2px #000;
+  pointer-events: none;
+}
+
+.play__buyzone span {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-right: 4px;
+  border: 2px solid #7dff5a;
+  font-weight: bold;
+}
