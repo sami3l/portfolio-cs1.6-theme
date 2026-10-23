@@ -83,8 +83,9 @@ export function hashFor(state: State): string {
   return top === 'project' && state.projectId ? `projects/${state.projectId}` : top;
 }
 
-const SETTINGS_KEY = 'cs-portfolio:settings';
-const DEFAULT_SETTINGS: Settings = { sound: false, theme: 'classic', playerName: 'Visitor' };
+// v2: sounds became on by default; the new key keeps earlier visits' saved "off" from overriding that.
+const SETTINGS_KEY = 'cs-portfolio:settings:v2';
+const DEFAULT_SETTINGS: Settings = { sound: true, theme: 'classic', playerName: 'Visitor' };
 
 function loadSettings(): Settings {
   try {
