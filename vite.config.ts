@@ -8,4 +8,8 @@ export default defineConfig({
   // and under a GitHub Pages project path like /portfolio-cs1.6-theme/.
   // Safe because the app is a single page with hash routing.
   base: './',
+  build: {
+    // The lazily loaded 3D scene (Three.js) is one ~930 kB chunk by design; the main bundle stays small.
+    chunkSizeWarningLimit: 1000,
+  },
 })

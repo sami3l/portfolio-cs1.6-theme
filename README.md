@@ -20,7 +20,7 @@ Every part of the classic menu is a section of the portfolio:
 | **Console** | Commands like `help`, `connect <project>`, `cv en`, `status`, plus a few easter eggs |
 | **Quit** | Exactly what you'd expect |
 
-It also has a loading screen on the first visit, a "connecting to server" screen when opening a project, a kill feed for notifications, UI sounds, and a plain [résumé view](https://sami3l.github.io/portfolio-cs1.6-theme/#resume) for anyone who'd rather skip the game. The English and French CVs can be downloaded from the About window, the Options window, the résumé view, or with `cv en` / `cv fr` in the console.
+On desktop the menu sits on a **3D desert town** built with Three.js (with an SVG fallback on phones, with reduced motion, or without WebGL), and the GitOps platform's project window includes an interactive **map overview** of its architecture, drawn like a CS radar. It also has a loading screen on the first visit, a "connecting to server" screen when opening a project, a kill feed for notifications, UI sounds, and a plain [résumé view](https://sami3l.github.io/portfolio-cs1.6-theme/#resume) for anyone who'd rather skip the game. The English and French CVs can be downloaded from the About window, the Options window, the résumé view, or with `cv en` / `cv fr` in the console.
 
 ### Controls
 
@@ -38,7 +38,8 @@ Every window has its own URL (`#projects/stratospend`, `#skills`…), so section
 
 - **React 19 + TypeScript + Vite**, with no UI library. The VGUI windows, tabs, tables and buttons are small hand-written components.
 - State lives in a single React context and reducer, and the URL hash mirrors the top window.
-- The artwork is original: the desert-town background is inline SVG and the weapon icons are simple SVG paths. **No Valve assets are used**, and the sounds are synthesized with the Web Audio API.
+- **Three.js + React Three Fiber** for the 3D menu background: original low-poly geometry with canvas-drawn textures, lazy-loaded so it never slows down the first paint.
+- The rest of the artwork is original too: the fallback background and the map overview are inline SVG and the weapon icons are simple SVG paths. **No Valve assets are used**, and the sounds are synthesized with the Web Audio API.
 - [GoatCounter](https://www.goatcounter.com/) visit stats: cookie-free, no consent banner needed.
 - Deployed to GitHub Pages by GitHub Actions on every push to `main`.
 
@@ -72,7 +73,8 @@ npm run lint
 ```
 src/
   data/          portfolio.ts (all content) and its types
-  components/    VGUI primitives (Window, Button, Tabs), menu, background, icons
+  components/    VGUI primitives (Window, Button, Tabs), menu, background, map overview, icons
+  components/scene/  the Three.js menu scene (lazy-loaded)
   windows/       one component per window: MOTD, server browser, buy menu…
   hud/           console and kill feed
   console/       console command registry

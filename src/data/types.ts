@@ -37,6 +37,39 @@ export interface Project {
   live?: string;
   /** Paths under /public, e.g. "projects/foo.png". */
   images?: string[];
+  /** Architecture drawn as a CS map overview (radar) in the project window. */
+  overview?: MapOverview;
+}
+
+/** What travels along a route; each kind gets its own colour in the overview. */
+export type RouteKind = 'build' | 'deploy' | 'auth' | 'secret' | 'metrics';
+
+export interface OverviewZone {
+  id: string;
+  label: string;
+  sub?: string;
+  /** Position and size in a 1000×640 grid. */
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  /** Bombsite letter or spawn marker drawn on the zone. */
+  marker?: 'A' | 'B' | 'T' | 'CT';
+  /** Shown when the zone is hovered, focused or tapped. */
+  detail: string;
+}
+
+export interface OverviewRoute {
+  from: string;
+  to: string;
+  kind: RouteKind;
+}
+
+export interface MapOverview {
+  /** Map name shown in the radar's corner, e.g. "de_gitops". */
+  name: string;
+  zones: OverviewZone[];
+  routes: OverviewRoute[];
 }
 
 export interface Skill {

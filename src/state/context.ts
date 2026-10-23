@@ -27,6 +27,8 @@ export interface Settings {
   sound: boolean;
   theme: 'classic' | 'dark';
   playerName: string;
+  /** 3D menu background (desktop only). */
+  scene3d: boolean;
 }
 
 export interface State {

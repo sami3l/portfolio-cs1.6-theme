@@ -1,3 +1,4 @@
+import { MapOverview } from '../components/MapOverview';
 import { Button, LinkButton } from '../components/vgui/Button';
 import { Window } from '../components/vgui/Window';
 import { portfolio } from '../data/portfolio';
@@ -16,8 +17,8 @@ export function ServerInfoDialog() {
     <Window
       id="project"
       title={`Server Info · ${project.name}`}
-      width={600}
-      height={620}
+      width={project.overview ? 820 : 600}
+      height={project.overview ? 720 : 620}
       footer={
         <>
           {project.live ? <LinkButton href={project.live}>Join game</LinkButton> : <Button disabled>Join game</Button>}
@@ -60,6 +61,12 @@ export function ServerInfoDialog() {
           <p key={p}>{p}</p>
         ))}
       </div>
+      {project.overview && (
+        <>
+          <h3 className="section-label">Map overview</h3>
+          <MapOverview overview={project.overview} />
+        </>
+      )}
       <h3 className="section-label">Stack</h3>
       <ul className="chips">
         {project.stack.map((s) => (

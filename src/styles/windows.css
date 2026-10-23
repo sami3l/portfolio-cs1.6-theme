@@ -756,3 +756,201 @@ tr[aria-selected='true'] .servers__summary {
     margin-left: 0;
   }
 }
+
+/* ---------- Map overview (architecture radar) ---------- */
+
+.radar {
+  margin: 0;
+}
+
+.radar__map {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border-dark);
+}
+
+.radar__bg {
+  fill: #0d130c;
+}
+
+.radar__grid {
+  stroke: rgba(125, 255, 90, 0.06);
+  stroke-width: 1;
+}
+
+.radar__name {
+  fill: rgba(125, 255, 90, 0.35);
+  font: 22px var(--font-hud);
+}
+
+.radar__room {
+  fill: rgba(196, 181, 80, 0.1);
+  stroke: rgba(216, 222, 211, 0.45);
+  stroke-width: 2;
+  transition: fill 0.15s, stroke 0.15s;
+}
+
+.radar__room--site {
+  fill: rgba(255, 90, 74, 0.1);
+  stroke: rgba(255, 90, 74, 0.6);
+}
+
+.radar__zone {
+  cursor: pointer;
+  outline: none;
+  transition: opacity 0.15s;
+}
+
+.radar__zone:hover .radar__room,
+.radar__zone:focus-visible .radar__room,
+.radar__zone.is-active .radar__room {
+  fill: rgba(196, 181, 80, 0.28);
+  stroke: var(--accent);
+}
+
+.radar__zone:focus-visible .radar__room {
+  stroke-dasharray: 6 4;
+}
+
+.radar__zone.is-dim,
+.radar__route.is-dim {
+  opacity: 0.25;
+}
+
+.radar__label {
+  fill: #e8ecdf;
+  font: bold 20px var(--font-ui);
+  pointer-events: none;
+}
+
+.radar__sub {
+  fill: rgba(216, 222, 211, 0.6);
+  font: 14px var(--font-ui);
+  pointer-events: none;
+}
+
+.radar__marker circle {
+  stroke-width: 2;
+}
+
+.radar__marker text {
+  font: bold 18px var(--font-ui);
+  pointer-events: none;
+}
+
+.radar__marker--site circle {
+  fill: #5a1410;
+  stroke: var(--t);
+}
+
+.radar__marker--site text {
+  fill: #ffd3cc;
+}
+
+.radar__marker--t circle {
+  fill: #4a2a08;
+  stroke: var(--hud);
+}
+
+.radar__marker--t text {
+  fill: var(--hud);
+}
+
+.radar__marker--ct circle {
+  fill: #0f2a44;
+  stroke: var(--ct);
+}
+
+.radar__marker--ct text {
+  fill: var(--ct);
+  font-size: 14px;
+}
+
+.radar__route {
+  stroke-width: 3;
+  stroke-dasharray: 10 8;
+  animation: radar-flow 1.2s linear infinite;
+  transition: opacity 0.15s;
+}
+
+.radar__route--build { stroke: var(--accent); }
+.radar__route--deploy { stroke: #7dff5a; }
+.radar__route--auth { stroke: var(--ct); }
+.radar__route--secret { stroke: var(--hud); }
+.radar__route--metrics { stroke: #d58cff; }
+
+.radar__arrow--build { fill: var(--accent); }
+.radar__arrow--deploy { fill: #7dff5a; }
+.radar__arrow--auth { fill: var(--ct); }
+.radar__arrow--secret { fill: var(--hud); }
+.radar__arrow--metrics { fill: #d58cff; }
+
+@keyframes radar-flow {
+  to {
+    stroke-dashoffset: -18;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .radar__route {
+    animation: none;
+  }
+}
+
+.radar__info {
+  min-height: 64px;
+  margin-top: 8px;
+  padding: 8px 12px;
+}
+
+.radar__info p {
+  margin: 4px 0 0;
+}
+
+.radar__info-sub {
+  color: var(--text-dim);
+}
+
+.radar__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 8px 0 0;
+  padding: 0;
+  color: var(--text-dim);
+  font-size: 12px;
+  list-style: none;
+}
+
+.radar__legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.radar__swatch {
+  display: inline-block;
+  width: 22px;
+  border-top: 3px dashed;
+  border-color: inherit;
+}
+
+.radar__swatch.radar__route--build { border-color: var(--accent); }
+.radar__swatch.radar__route--deploy { border-color: #7dff5a; }
+.radar__swatch.radar__route--auth { border-color: var(--ct); }
+.radar__swatch.radar__route--secret { border-color: var(--hud); }
+.radar__swatch.radar__route--metrics { border-color: #d58cff; }
+
+.radar__marker-key {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--t);
+  border-radius: 50%;
+  background: #5a1410;
+  color: #ffd3cc;
+  font-size: 11px;
+  font-weight: bold;
+}

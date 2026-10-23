@@ -97,7 +97,7 @@ export function hashFor(state: State): string {
 
 // v2: sounds became on by default; the new key keeps earlier visits' saved "off" from overriding that.
 const SETTINGS_KEY = 'cs-portfolio:settings:v2';
-const DEFAULT_SETTINGS: Settings = { sound: true, theme: 'classic', playerName: 'Visitor' };
+const DEFAULT_SETTINGS: Settings = { sound: true, theme: 'classic', playerName: 'Visitor', scene3d: true };
 
 function loadSettings(): Settings {
   try {

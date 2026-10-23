@@ -111,6 +111,14 @@ export function OptionsWindow() {
               />
               <span>Enable UI sounds</span>
             </label>
+            <label className="form-row form-row--inline">
+              <input
+                type="checkbox"
+                checked={state.settings.scene3d}
+                onChange={(e) => actions.setSettings({ scene3d: e.target.checked })}
+              />
+              <span>3D background (desktop)</span>
+            </label>
             <label className="form-row">
               <span>Theme</span>
               <select
