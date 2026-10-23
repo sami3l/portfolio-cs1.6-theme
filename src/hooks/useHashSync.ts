@@ -9,7 +9,9 @@ import { hashFor, isRoutable } from '../state/reducer';
  */
 export function useHashSync(state: State, syncHash: (hash: string) => void) {
   const hash = hashFor(state);
-  const depth = state.view === 'resume' ? Number.MAX_SAFE_INTEGER : state.stack.filter(isRoutable).length;
+  // Full-page views (résumé, Play mode) count as the deepest level, so entering them pushes history.
+  const depth =
+    state.view === 'resume' || state.view === 'play' ? Number.MAX_SAFE_INTEGER : state.stack.filter(isRoutable).length;
   const prevDepth = useRef(depth);
 
   useEffect(() => {

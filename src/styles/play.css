@@ -1,0 +1,88 @@
+/* ---------- Play mode ---------- */
+
+.play-root,
+.play {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #000;
+}
+
+.play__canvas {
+  position: absolute !important;
+  inset: 0;
+}
+
+.play__loading {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  color: var(--hud);
+  font: 18px var(--font-hud);
+}
+
+/* classic green CS crosshair with a centre gap */
+.play__crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  background:
+    linear-gradient(#00ff3c, #00ff3c) center top / 2px 8px no-repeat,
+    linear-gradient(#00ff3c, #00ff3c) center bottom / 2px 8px no-repeat,
+    linear-gradient(#00ff3c, #00ff3c) left center / 8px 2px no-repeat,
+    linear-gradient(#00ff3c, #00ff3c) right center / 8px 2px no-repeat;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.8));
+}
+
+.play__hint {
+  position: absolute;
+  bottom: 12px;
+  left: 16px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+  text-shadow: 0 1px 2px #000;
+  pointer-events: none;
+}
+
+.play__overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--gutter);
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.play .play__dialog {
+  position: static;
+  width: min(440px, 100%);
+}
+
+.play__controls {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 4px 12px;
+  margin: 12px 0 0;
+}
+
+.play__controls dt {
+  color: var(--text-dim);
+}
+
+.play__controls dd {
+  margin: 0;
+}
+
+@media (max-width: 767px) {
+  .play .play__dialog {
+    width: 100% !important;
+    height: auto !important;
+  }
+}

@@ -12,6 +12,7 @@ Every part of the classic menu is a section of the portfolio:
 
 | In the game | In the portfolio |
 | --- | --- |
+| **Play** | *Work in progress:* walk the portfolio as a first-person 3D map, "de_career" (desktop, `#play` or `map de_career` in the console) |
 | **New Game** (message of the day) | About me, languages, interests and the "choose a team" shortcuts |
 | **Find Servers** | Projects: filter by tab or text, then connect to open a project's details, links and screenshots |
 | **Buy Menu** | Skills by category, with the projects and jobs where each one was used |

@@ -10,7 +10,7 @@ export type WindowId =
   | 'console'
   | 'quit';
 
-export type View = 'game' | 'resume' | 'goodbye';
+export type View = 'game' | 'resume' | 'goodbye' | 'play';
 export type Weapon = 'rifle' | 'sniper' | 'pistol' | 'knife' | 'grenade';
 export type Team = 'ct' | 't';
 

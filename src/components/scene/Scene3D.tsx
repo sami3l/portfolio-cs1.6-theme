@@ -1,42 +1,12 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
+import { canvasTexture, crateTexture, HORIZON, mulberry32, SAND, TRIM, WALL, WOOD } from './materials';
+import { Sky } from './Sky';
 
 // An original low-poly desert town (no game assets), laid out like the SVG fallback:
 // arched wall with doors, a painted "A" sign, stacked crates, far buildings, dust in the air.
 // Loaded lazily, desktop only; see Background.tsx for the gating.
-
-const SAND = '#d9b47c';
-const WALL = '#c8975c';
-const TRIM = '#a87a45';
-const WOOD = '#6e4a28';
-const HORIZON = '#e9b46c';
-
-function canvasTexture(width: number, height: number, draw: (g: CanvasRenderingContext2D) => void) {
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-  draw(canvas.getContext('2d')!);
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  texture.anisotropy = 4;
-  return texture;
-}
-
-const crateTexture = () =>
-  canvasTexture(256, 256, (g) => {
-    for (let y = 0; y < 256; y += 32) {
-      g.fillStyle = (y / 32) % 2 ? '#94733f' : '#86663a';
-      g.fillRect(0, y, 256, 32);
-    }
-    g.strokeStyle = '#5e4423';
-    g.lineWidth = 24;
-    g.strokeRect(12, 12, 232, 232);
-    g.beginPath();
-    g.moveTo(24, 232);
-    g.lineTo(232, 24);
-    g.stroke();
-  });
 
 const signTexture = () =>
   canvasTexture(512, 256, (g) => {
@@ -69,47 +39,6 @@ function archWallGeometry(width: number, height: number, archHalf: number, archS
   s.lineTo(-width / 2, height);
   s.closePath();
   return new THREE.ExtrudeGeometry(s, { depth, bevelEnabled: false });
-}
-
-function Sky() {
-  const material = useMemo(
-    () =>
-      new THREE.ShaderMaterial({
-        side: THREE.BackSide,
-        depthWrite: false,
-        toneMapped: false,
-        uniforms: {
-          top: { value: new THREE.Color('#f4d79e') },
-          bottom: { value: new THREE.Color(HORIZON) },
-          sunDir: { value: new THREE.Vector3(0.55, 0.3, -0.78).normalize() },
-        },
-        vertexShader: /* glsl */ `
-          varying vec3 vDir;
-          void main() {
-            vDir = normalize(position);
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-          }`,
-        fragmentShader: /* glsl */ `
-          uniform vec3 top;
-          uniform vec3 bottom;
-          uniform vec3 sunDir;
-          varying vec3 vDir;
-          void main() {
-            vec3 dir = normalize(vDir);
-            vec3 col = mix(bottom, top, clamp(dir.y * 1.8, 0.0, 1.0));
-            float s = max(dot(dir, sunDir), 0.0);
-            col += vec3(1.0, 0.96, 0.85) * pow(s, 80.0) + vec3(1.0, 0.86, 0.6) * pow(s, 6.0) * 0.3;
-            gl_FragColor = vec4(col, 1.0);
-            #include <colorspace_fragment>
-          }`,
-      }),
-    [],
-  );
-  return (
-    <mesh material={material}>
-      <sphereGeometry args={[90, 32, 16]} />
-    </mesh>
-  );
 }
 
 function Ground() {
@@ -272,17 +201,6 @@ function CameraRig() {
     camera.lookAt(target);
   });
   return null;
-}
-
-/** Small seeded PRNG so the town looks the same on every visit. */
-function mulberry32(seed: number) {
-  return () => {
-    seed |= 0;
-    seed = (seed + 0x6d2b79f5) | 0;
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
 }
 
 /** `still` (reduced motion): render a single frame, with no camera drift or moving dust. */

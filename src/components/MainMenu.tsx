@@ -2,7 +2,8 @@ import { sfx } from '../audio/sfx';
 import { portfolio } from '../data/portfolio';
 import { useStore, type WindowId } from '../state/context';
 
-const ITEMS: { label: string; hint: string; window: WindowId }[] = [
+const ITEMS: { label: string; hint: string; window: WindowId | 'play' }[] = [
+  { label: 'Play', hint: 'Walk the map', window: 'play' },
   { label: 'New Game', hint: 'About me', window: 'about' },
   { label: 'Find Servers', hint: 'Projects', window: 'projects' },
   { label: 'Buy Menu', hint: 'Skills', window: 'skills' },
@@ -31,7 +32,8 @@ export function MainMenu() {
               onMouseEnter={sfx.hover}
               onClick={() => {
                 sfx.click();
-                actions.open(item.window);
+                if (item.window === 'play') actions.setView('play');
+                else actions.open(item.window);
               }}
             >
               <span>{item.label}</span>

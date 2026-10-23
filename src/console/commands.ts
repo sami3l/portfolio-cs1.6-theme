@@ -152,6 +152,16 @@ export const COMMANDS: Command[] = [
       print(`Theme set to ${args[0]}.`);
     },
   },
+  {
+    names: ['map'],
+    usage: '<de_career>',
+    help: 'Load the walkable map (Play mode)',
+    run: (args, { actions, print }) => {
+      if (args[0] && args[0].toLowerCase() !== 'de_career') return print({ text: `map "${args[0]}" not found. Available: de_career`, kind: 'error' });
+      print('Loading de_career…');
+      actions.setView('play');
+    },
+  },
   { names: ['echo'], usage: '<text>', help: 'Print text', run: (args, { print }) => print(args.join(' ')) },
   { names: ['clear', 'cls'], help: 'Clear the console', run: (_args, { clear }) => clear() },
   { names: ['quit', 'exit', 'disconnect'], help: 'Leave the server', run: opener('quit', 'Really?') },

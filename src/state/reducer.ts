@@ -65,7 +65,7 @@ export function reducer(state: State, action: Action): State {
  * Going back to a window that is already open closes the routable windows opened after it.
  */
 export function applyHash(state: State, hash: string): State {
-  if (hash === 'resume') return { ...state, view: 'resume', stack: [] };
+  if (hash === 'resume' || hash === 'play') return { ...state, view: hash, stack: [], connecting: null };
   const game: State = { ...state, view: 'game' };
   if (hash === '') return { ...game, stack: state.stack.filter((w) => !isRoutable(w)) };
 
@@ -87,7 +87,7 @@ export function applyHash(state: State, hash: string): State {
 }
 
 export function hashFor(state: State): string {
-  if (state.view === 'resume') return 'resume';
+  if (state.view === 'resume' || state.view === 'play') return state.view;
   if (state.view === 'goodbye') return '';
   const routable = state.stack.filter(isRoutable);
   const top = routable[routable.length - 1];

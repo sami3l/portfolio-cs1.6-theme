@@ -8,6 +8,7 @@ import './styles/vgui.css';
 import './styles/app.css';
 import './styles/windows.css';
 import './styles/resume.css';
+import './styles/play.css';
 
 initLinkTracking();
 document.title = `${portfolio.profile.name} · ${portfolio.profile.title}`;

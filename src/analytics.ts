@@ -38,6 +38,7 @@ const VIEW_TITLES: Record<string, string> = {
   scoreboard: 'Experience',
   options: 'Contact',
   resume: 'Résumé',
+  play: 'Play mode',
 };
 
 export function titleForHash(hash: string, projectName?: string) {
