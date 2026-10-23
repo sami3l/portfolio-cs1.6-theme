@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Background } from './components/Background';
 import { MainMenu } from './components/MainMenu';
 import { useHotkeys } from './hooks/useHotkeys';
@@ -6,6 +6,8 @@ import { KillFeed } from './hud/KillFeed';
 import { useStore } from './state/context';
 import { StoreProvider } from './state/StoreProvider';
 import { Goodbye } from './views/Goodbye';
+import { shouldShowLoading } from './utils/loading';
+import { LoadingScreen } from './views/LoadingScreen';
 import { Resume } from './views/Resume';
 import { WindowLayer } from './windows/WindowLayer';
 
@@ -20,6 +22,7 @@ export default function App() {
 function Game() {
   const { state, actions } = useStore();
   const greeted = useRef(false);
+  const [loading, setLoading] = useState(() => state.view === 'game' && shouldShowLoading());
   useHotkeys();
 
   useEffect(() => {
@@ -37,6 +40,7 @@ function Game() {
       <MainMenu />
       <WindowLayer />
       <KillFeed />
+      {loading && <LoadingScreen onDone={() => setLoading(false)} />}
       <footer className="desktop__footer">
         <span className="desktop__keys">
           Hold <kbd>TAB</kbd> scoreboard · <kbd>B</kbd> buy menu · <kbd>~</kbd> console · <kbd>Esc</kbd> close

@@ -2,13 +2,15 @@ import { Button, LinkButton } from '../components/vgui/Button';
 import { Window } from '../components/vgui/Window';
 import { portfolio } from '../data/portfolio';
 import { useStore } from '../state/context';
-import { asset, mapName } from '../utils/format';
+import { mapName } from '../utils/format';
+import { screenshotsFor } from '../utils/screenshots';
 
 /** Details of one project, presented as the "Server Info" dialog. */
 export function ServerInfoDialog() {
   const { state, actions } = useStore();
   const project = portfolio.projects.find((p) => p.id === state.projectId);
   if (!project) return null;
+  const shots = screenshotsFor(project);
 
   return (
     <Window
@@ -66,12 +68,17 @@ export function ServerInfoDialog() {
           </li>
         ))}
       </ul>
-      {project.images && project.images.length > 0 && (
-        <div className="info-shots">
-          {project.images.map((src, i) => (
-            <img key={src} src={asset(src)} alt={`${project.name} screenshot ${i + 1}`} loading="lazy" />
-          ))}
-        </div>
+      {shots.length > 0 && (
+        <>
+          <h3 className="section-label">Screenshots</h3>
+          <div className="info-shots">
+            {shots.map((src, i) => (
+              <a key={src} href={src} target="_blank" rel="noreferrer">
+                <img src={src} alt={`${project.name} screenshot ${i + 1}`} loading="lazy" />
+              </a>
+            ))}
+          </div>
+        </>
       )}
     </Window>
   );

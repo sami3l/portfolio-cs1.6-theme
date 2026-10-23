@@ -50,6 +50,22 @@ export const portfolio: Portfolio = {
       featured: true,
     },
     {
+      id: 'stratospend',
+      name: 'StratoSpend',
+      summary: 'Multi-cloud resource inventory and cost management platform',
+      description: [
+        'A multi-cloud resource inventory and cost management application, built product-first: features land one vertical milestone at a time before the repository grows into a full DevSecOps platform with security scanning, Kubernetes, GitOps and observability.',
+        'Milestone 1 is complete: registering and managing cloud accounts for AWS, Azure and GCP across development, staging and production, with activation and deactivation instead of destructive deletes.',
+        'Spring Boot REST API with DTOs separated from the persistence model, Flyway-versioned PostgreSQL schema, consistent validation and error responses, and a responsive Next.js UI. Covered by backend API tests and frontend component tests.',
+      ],
+      stack: ['Spring Boot', 'Java', 'Next.js', 'React', 'TypeScript', 'PostgreSQL', 'Flyway', 'JUnit', 'Vitest', 'Docker Compose'],
+      role: 'Solo developer',
+      year: 2026,
+      category: 'side',
+      featured: true,
+      repo: 'https://github.com/sami3l/stratospend',
+    },
+    {
       id: 'synthetic-data',
       name: 'Synthetic Data Platform',
       summary: 'AI-powered platform that generates and validates synthetic datasets',
@@ -63,6 +79,7 @@ export const portfolio: Portfolio = {
       year: 2025,
       category: 'work',
       featured: true,
+      repo: 'https://github.com/sami3l/Synthetic-Data-Generation-Platform',
     },
     {
       id: 'inventory-app',
@@ -77,6 +94,8 @@ export const portfolio: Portfolio = {
       org: 'OCP Group',
       year: 2024,
       category: 'work',
+      repo: 'https://github.com/sami3l/StockManagement',
+      live: 'https://stock-management-dun.vercel.app',
     },
     {
       id: 'aws-terraform',
@@ -91,6 +110,7 @@ export const portfolio: Portfolio = {
       org: 'EMSI',
       category: 'academic',
       featured: true,
+      repo: 'https://github.com/sami3l/devops-project',
     },
     {
       id: 'foodallergyai',
@@ -105,6 +125,35 @@ export const portfolio: Portfolio = {
       role: 'Academic project',
       org: 'EMSI',
       category: 'academic',
+      repo: 'https://github.com/sami3l/FoodAllergy-Backend',
+    },
+    {
+      id: 'smartmelon',
+      name: 'SmartMelon',
+      summary: 'AI mobile app that detects, counts and grades watermelons in the field',
+      description: [
+        'Precision-agriculture app that uses computer vision to detect and count watermelons and assess their quality, so farmers can analyse a field from any smartphone.',
+        'The FastAPI backend handles e-mail/password and Google OAuth sign-in with JWT tokens, serves the AI detection model through a REST API, and stores detection results and field analytics.',
+      ],
+      stack: ['FastAPI', 'Python', 'Computer vision', 'OAuth 2.0', 'JWT', 'Uvicorn'],
+      role: 'Backend developer',
+      year: 2025,
+      category: 'side',
+      repo: 'https://github.com/sami3l/SmartMelon-backend',
+    },
+    {
+      id: 'clinchain',
+      name: 'ClinChain',
+      summary: 'Pharmaceutical supply-chain tracking for medical lots, backed by a smart contract',
+      description: [
+        'Tracks medical lots through the pharmaceutical supply chain with role-based access: wholesalers create lots, hospitals validate them, pharmacists withdraw from them and nurses record their history.',
+        'Flutter mobile app with a Solidity smart contract, and a Spring Boot 3.2 REST API (github.com/sami3l/backend-blockchain) secured with Spring Security and JWT.',
+      ],
+      stack: ['Flutter', 'Dart', 'Solidity', 'Spring Boot', 'Java', 'Spring Security', 'JWT', 'PostgreSQL'],
+      role: 'Full-stack developer',
+      year: 2025,
+      category: 'side',
+      repo: 'https://github.com/sami3l/ClinChain',
     },
     {
       id: 'de-portfolio',
@@ -119,6 +168,8 @@ export const portfolio: Portfolio = {
       teamSize: 1,
       year: 2026,
       category: 'side',
+      repo: 'https://github.com/sami3l/portfolio-cs1.6-theme',
+      live: 'https://sami3l.github.io/portfolio-cs1.6-theme/',
     },
   ],
 
