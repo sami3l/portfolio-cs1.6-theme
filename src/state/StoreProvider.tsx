@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useReducer, type ReactNode } from 'react';
+import { titleForHash, trackView } from '../analytics';
 import { setSoundEnabled } from '../audio/sfx';
+import { portfolio } from '../data/portfolio';
 import { useHashSync } from '../hooks/useHashSync';
 import { StoreContext, type Actions } from './context';
-import { initState, reducer, saveSettings } from './reducer';
+import { hashFor, initState, reducer, saveSettings } from './reducer';
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, undefined, initState);
@@ -35,6 +37,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, [state.settings.theme]);
 
   useHashSync(state, actions.syncHash);
+
+  const hash = hashFor(state);
+  useEffect(() => {
+    const project = portfolio.projects.find((p) => hash === `projects/${p.id}`);
+    trackView(hash, titleForHash(hash, project?.name));
+  }, [hash]);
 
   const value = useMemo(() => ({ state, actions }), [state, actions]);
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;

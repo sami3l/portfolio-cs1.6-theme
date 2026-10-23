@@ -1,5 +1,6 @@
 import { portfolio } from '../data/portfolio';
 import type { Actions, State, WindowId } from '../state/context';
+import { trackEvent } from '../analytics';
 import { asset, prettyUrl } from '../utils/format';
 
 export interface Line {
@@ -42,6 +43,7 @@ const downloadResume = (lang: string, ctx: CommandContext) => {
   a.href = asset(file.href);
   a.download = file.filename;
   a.click();
+  trackEvent(`download: ${file.filename}`);
   ctx.print(`Downloading ${file.filename}…`);
   ctx.actions.kill({ killer: ctx.state.settings.playerName, weapon: 'sniper', victim: `CV_${file.lang}.pdf`, headshot: true });
 };

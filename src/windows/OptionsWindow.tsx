@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { trackEvent } from '../analytics';
 import { ResumeDownloads } from '../components/ResumeDownloads';
 import { Button, LinkButton } from '../components/vgui/Button';
 import { Tabs } from '../components/vgui/Tabs';
@@ -25,6 +26,7 @@ export function OptionsWindow() {
   const copyEmail = async () => {
     try {
       await navigator.clipboard.writeText(contact.email);
+      trackEvent('email-copy', 'E-mail address copied');
       setStatus('E-mail address copied to the clipboard.');
       actions.kill({ killer: state.settings.playerName, weapon: 'knife', victim: 'awkward silence' });
     } catch {
