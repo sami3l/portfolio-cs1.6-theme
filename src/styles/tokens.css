@@ -1,0 +1,42 @@
+/* VGUI palette (Steam / Half-Life era). Swap tokens here to retheme everything. */
+:root {
+  --panel: #4c5844;
+  --panel-raised: #5a6850;
+  --panel-dark: #3e4637;
+  --field: #3e4637;
+  --border-light: #8c9284;
+  --border-dark: #292c21;
+  --text: #d8ded3;
+  --text-dim: #a0aa95;
+  --text-bright: #ffffff;
+  --accent: #c4b550;
+  --select: #958831;
+  --select-text: #ffffff;
+  --link: #e6d27a;
+
+  --hud: #ffa01e;
+  --hud-bg: rgba(0, 0, 0, 0.55);
+  --ct: #99ccff;
+  --t: #ff5a4a;
+
+  --font-ui: Tahoma, Verdana, 'Segoe UI', sans-serif;
+  --font-hud: 'Share Tech Mono', ui-monospace, Consolas, monospace;
+  --font-logo: 'Black Ops One', Impact, 'Arial Black', sans-serif;
+
+  --gutter: 16px;
+  color-scheme: dark;
+}
+
+:root[data-theme='dark'] {
+  --panel: #3b3b3b;
+  --panel-raised: #484848;
+  --panel-dark: #2b2b2b;
+  --field: #262626;
+  --border-light: #737373;
+  --border-dark: #151515;
+  --text: #e0e0e0;
+  --text-dim: #9c9c9c;
+  --accent: #f0a830;
+  --select: #a8721a;
+  --link: #f6c25b;
+}

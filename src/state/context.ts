@@ -1,0 +1,63 @@
+import { createContext, useContext } from 'react';
+
+export type WindowId =
+  | 'about'
+  | 'projects'
+  | 'project'
+  | 'skills'
+  | 'scoreboard'
+  | 'options'
+  | 'console'
+  | 'quit';
+
+export type View = 'game' | 'resume' | 'goodbye';
+export type Weapon = 'rifle' | 'sniper' | 'pistol' | 'knife' | 'grenade';
+export type Team = 'ct' | 't';
+
+export interface Kill {
+  id: number;
+  killer: string;
+  victim: string;
+  weapon: Weapon;
+  team: Team;
+  headshot?: boolean;
+}
+
+export interface Settings {
+  sound: boolean;
+  theme: 'classic' | 'dark';
+  playerName: string;
+}
+
+export interface State {
+  view: View;
+  /** Open windows, bottom to top. The last one has focus. */
+  stack: WindowId[];
+  projectId: string | null;
+  kills: Kill[];
+  killSeq: number;
+  settings: Settings;
+}
+
+export interface Actions {
+  open: (id: WindowId) => void;
+  close: (id: WindowId) => void;
+  toggle: (id: WindowId) => void;
+  closeTop: () => void;
+  openProject: (projectId: string) => void;
+  kill: (kill: Omit<Kill, 'id' | 'team'> & { team?: Team }) => void;
+  expireKill: (id: number) => void;
+  setSettings: (patch: Partial<Settings>) => void;
+  setView: (view: View) => void;
+  syncHash: (hash: string) => void;
+}
+
+export const StoreContext = createContext<{ state: State; actions: Actions } | null>(null);
+
+export function useStore() {
+  const ctx = useContext(StoreContext);
+  if (!ctx) throw new Error('useStore must be used inside <StoreProvider>');
+  return ctx;
+}
+
+export const topWindow = (state: State): WindowId | undefined => state.stack[state.stack.length - 1];

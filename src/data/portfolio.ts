@@ -1,0 +1,268 @@
+import type { Portfolio } from './types';
+
+/**
+ * All site content lives here, taken from the EN/FR résumés in /public/resume.
+ * Files in /public are referenced without a leading slash, e.g. "projects/foo.png".
+ */
+export const portfolio: Portfolio = {
+  profile: {
+    name: 'Sami Elhadraoui',
+    nickname: 'sami3l',
+    title: 'Full-Stack & DevOps Engineer',
+    location: 'Casablanca, Morocco',
+    avatar: 'avatar.jpg',
+    tagline: 'Full-Stack & DevOps Engineer',
+    bio: [
+      'State Engineer in Computer Science with a double skill set: Full-Stack development and DevOps. I work with Java, Spring Boot, Next.js, Kubernetes, GitOps and CI/CD.',
+      'I like building fast, reliable applications and then automating everything it takes to ship them: pipelines, clusters, monitoring and security.',
+    ],
+    languages: [
+      { name: 'Arabic', level: 'Native' },
+      { name: 'French', level: 'Fluent' },
+      { name: 'English', level: 'Advanced' },
+    ],
+    certifications: [
+      { name: 'OCI DevOps Professional', issuer: 'Oracle', inProgress: true },
+      { name: 'Introduction to Containers with Docker, Kubernetes & OpenShift', issuer: 'IBM' },
+      { name: 'Introduction to Cloud Computing', issuer: 'IBM' },
+      { name: 'Advanced Spring Cloud Microservices' },
+      { name: 'Machine Learning', issuer: 'Duke University' },
+    ],
+    interests: ['Kubernetes & open source', 'AI research', 'Video games', 'Football'],
+  },
+
+  projects: [
+    {
+      id: 'gitops-platform',
+      name: 'Multi-Cluster GitOps Platform',
+      summary: 'Kubernetes GitOps platform with an app catalogue that deploys to many clusters',
+      description: [
+        'Final-year project at Atlas Cloud Services: designed and deployed a multi-cluster Kubernetes GitOps platform built on Rancher and Fleet.',
+        'Automated deployments with GitLab CI/CD, Helm and Infrastructure as Code to standardize environments, and built an application catalogue that deploys automatically across several Kubernetes clusters.',
+        'Integrated Harbor as a private OCI/Helm registry with versioning, plus SonarQube and Trivy in the pipelines. Access is secured with Keycloak (OIDC) and secrets are managed with Vault.',
+        'Observability with Prometheus and Grafana, with deployments tracked through Fleet to support troubleshooting.',
+      ],
+      stack: ['Kubernetes', 'Rancher', 'Fleet', 'Helm', 'GitLab CI/CD', 'Harbor', 'Keycloak', 'Vault', 'Terraform', 'Prometheus', 'Grafana', 'Spring Boot', 'Next.js', 'PostgreSQL', 'Redis'],
+      role: 'Cloud & DevOps intern',
+      org: 'Atlas Cloud Services',
+      year: 2026,
+      category: 'work',
+      featured: true,
+    },
+    {
+      id: 'synthetic-data',
+      name: 'Synthetic Data Platform',
+      summary: 'AI-powered platform that generates and validates synthetic datasets',
+      description: [
+        'Designed and developed a synthetic data generation platform using AI at Smart Automation Technologies.',
+        'Automated data validation, containerized the services with Docker and integrated CI/CD pipelines.',
+      ],
+      stack: ['FastAPI', 'Python', 'React Native', 'Expo', 'PostgreSQL', 'Supabase', 'SDV', 'FlashRAG', 'Docker'],
+      role: 'Full-Stack & AI intern',
+      org: 'Smart Automation Technologies',
+      year: 2025,
+      category: 'work',
+      featured: true,
+    },
+    {
+      id: 'inventory-app',
+      name: 'Inventory Management App',
+      summary: 'Web app to track and control stock in an industrial environment',
+      description: [
+        'Developed an inventory management web application at OCP Group to improve stock tracking and control in an industrial environment.',
+        'Integrated CI/CD pipelines with Jenkins to automate delivery.',
+      ],
+      stack: ['Spring Boot', 'Java', 'Next.js', 'TypeScript', 'Prisma', 'Docker', 'Jenkins'],
+      role: 'Full-Stack & DevOps intern',
+      org: 'OCP Group',
+      year: 2024,
+      category: 'work',
+    },
+    {
+      id: 'aws-terraform',
+      name: 'AWS Infrastructure with Terraform',
+      summary: 'Highly available AWS infrastructure for a containerized app, fully in Terraform',
+      description: [
+        'Automated the provisioning of an AWS infrastructure with Terraform to host a highly available containerized application on Amazon EKS.',
+        'Monitoring with Prometheus and Grafana, deployments with Helm and GitHub Actions.',
+      ],
+      stack: ['Terraform', 'AWS', 'Amazon EKS', 'EC2', 'VPC', 'IAM', 'ECR', 'Kubernetes', 'Helm', 'Docker', 'GitHub Actions', 'Prometheus', 'Grafana'],
+      role: 'Academic project',
+      org: 'EMSI',
+      category: 'academic',
+      featured: true,
+    },
+    {
+      id: 'foodallergyai',
+      name: 'FoodAllergyAI',
+      summary: 'Android app that scans food products and flags allergen risks instantly',
+      description: [
+        'Android application that scans products and instantly assesses allergen risks.',
+        'Uses OCR and the OpenFoodFacts API to extract and analyse ingredients straight from food packaging.',
+        'The Spring Boot API is containerized, with testing and delivery automated through GitHub Actions.',
+      ],
+      stack: ['Android', 'Java', 'Spring Boot', 'PostgreSQL', 'Docker', 'GitHub Actions', 'OCR', 'OpenFoodFacts API', 'Maven'],
+      role: 'Academic project',
+      org: 'EMSI',
+      category: 'academic',
+    },
+    {
+      id: 'de-portfolio',
+      name: 'CS 1.6 Portfolio',
+      summary: 'This site: the Counter-Strike 1.6 menu rebuilt as a portfolio',
+      description: [
+        'A personal portfolio styled after the Counter-Strike 1.6 main menu: VGUI windows, a server browser for projects, a buy menu for skills, a scoreboard for experience and a working console.',
+        'Built with React, TypeScript and Vite. No UI library: every window, table and tab is a small hand-written component, and all content comes from one typed data file.',
+      ],
+      stack: ['React', 'TypeScript', 'Vite', 'CSS'],
+      role: 'Solo developer',
+      teamSize: 1,
+      year: 2026,
+      category: 'side',
+    },
+  ],
+
+  skills: [
+    {
+      slot: 'Pistols',
+      label: 'Languages',
+      skills: [{ name: 'Java' }, { name: 'Python' }, { name: 'TypeScript' }, { name: 'Bash' }, { name: 'YAML' }],
+    },
+    {
+      slot: 'Shotguns',
+      label: 'Databases',
+      skills: [{ name: 'PostgreSQL' }, { name: 'Redis' }, { name: 'MongoDB' }, { name: 'Supabase' }, { name: 'Firebase' }],
+    },
+    {
+      slot: 'SMGs',
+      label: 'CI/CD & GitOps',
+      skills: [
+        { name: 'GitLab CI/CD' },
+        { name: 'GitHub Actions' },
+        { name: 'Jenkins' },
+        { name: 'Fleet' },
+        { name: 'Harbor' },
+        { name: 'Git' },
+      ],
+    },
+    {
+      slot: 'Rifles',
+      label: 'Backend & frontend',
+      skills: [
+        { name: 'Spring Boot' },
+        { name: 'FastAPI' },
+        { name: 'Next.js' },
+        { name: 'Node.js' },
+        { name: 'React Native' },
+        { name: 'Kafka' },
+        { name: 'REST APIs' },
+      ],
+    },
+    {
+      slot: 'Machine guns',
+      label: 'Containers, cloud & IaC',
+      skills: [
+        { name: 'Kubernetes' },
+        { name: 'Docker' },
+        { name: 'Rancher' },
+        { name: 'Helm' },
+        { name: 'Terraform' },
+        { name: 'AWS' },
+        { name: 'GCP' },
+        { name: 'Linux' },
+      ],
+    },
+    {
+      slot: 'Equipment',
+      label: 'Observability & security',
+      skills: [
+        { name: 'Prometheus' },
+        { name: 'Grafana' },
+        { name: 'ELK Stack' },
+        { name: 'SonarQube' },
+        { name: 'Trivy' },
+        { name: 'Keycloak' },
+        { name: 'OAuth2 / OIDC' },
+        { name: 'JWT' },
+        { name: 'Vault' },
+      ],
+    },
+    {
+      slot: 'Kevlar',
+      label: 'Soft skills',
+      skills: [
+        { name: 'Problem solving' },
+        { name: 'Attention to detail' },
+        { name: 'Autonomy & adaptability' },
+        { name: 'Continuous learning' },
+        { name: 'Teamwork & communication' },
+      ],
+    },
+  ],
+
+  experience: [
+    {
+      id: 'atlas-cloud',
+      team: 'ct',
+      title: 'Cloud & DevOps Intern (final-year project)',
+      org: 'Atlas Cloud Services',
+      start: '2026-02',
+      end: '2026-07',
+      highlights: [
+        'Designed and deployed a multi-cluster Kubernetes GitOps platform with Rancher and Fleet.',
+        'Automated deployments with GitLab CI/CD and Helm to standardize environments.',
+        'Built an application catalogue that deploys automatically across several Kubernetes clusters.',
+        'Monitored systems with Prometheus/Grafana and tracked deployments via Fleet to support troubleshooting.',
+        'Secured access with Keycloak (OIDC) and managed secrets with Vault.',
+        'Integrated Harbor for image/chart versioning and SonarQube/Trivy into pipelines.',
+      ],
+      stack: ['Linux', 'Kubernetes', 'Rancher', 'Fleet', 'Helm', 'GitLab CI/CD', 'Harbor', 'Keycloak', 'Vault', 'Terraform', 'PostgreSQL', 'Redis'],
+    },
+    {
+      id: 'smart-automation',
+      team: 'ct',
+      title: 'Full-Stack & AI Intern',
+      org: 'Smart Automation Technologies',
+      start: '2025-07',
+      end: '2025-09',
+      highlights: [
+        'Developed a synthetic data generation platform using AI, with automated data validation.',
+        'Containerized services with Docker and integrated CI/CD pipelines.',
+      ],
+      stack: ['Python', 'FastAPI', 'React Native', 'Expo', 'PostgreSQL', 'Supabase', 'Docker'],
+    },
+    {
+      id: 'ocp',
+      team: 'ct',
+      title: 'Full-Stack & DevOps Developer Intern',
+      org: 'OCP Group',
+      start: '2024-07',
+      end: '2024-09',
+      highlights: [
+        'Developed an inventory management web application for an industrial environment.',
+        'Integrated CI/CD pipelines to automate delivery.',
+      ],
+      stack: ['Java', 'Spring Boot', 'Next.js', 'TypeScript', 'Prisma', 'Docker', 'Jenkins'],
+    },
+    {
+      id: 'emsi',
+      team: 't',
+      title: 'State Engineering Degree, Computer Science & Networks',
+      org: 'Moroccan School of Engineering Sciences (EMSI)',
+      start: '2020',
+      end: '2026',
+      highlights: ['Relevant coursework: Cloud Computing, Linux Systems Administration, Software Engineering.'],
+    },
+  ],
+
+  contact: {
+    email: 'elhadraoui.sami.iir@gmail.com',
+    phone: '+212 676-092320',
+    github: 'https://github.com/sami3l',
+    linkedin: 'https://www.linkedin.com/in/elhadraoui-sami',
+    resumes: [
+      { lang: 'EN', label: 'English', href: 'resume/english_version.pdf', filename: 'Sami-Elhadraoui-CV-EN.pdf' },
+      { lang: 'FR', label: 'Français', href: 'resume/french_version.pdf', filename: 'Sami-Elhadraoui-CV-FR.pdf' },
+    ],
+  },
+};

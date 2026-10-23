@@ -1,0 +1,148 @@
+/* Plain résumé view: light, readable and printable, intentionally not themed. */
+
+.resume {
+  min-height: 100%;
+  background: #f7f6f2;
+  color: #1d1d1b;
+  font: 15px/1.6 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+.resume a {
+  color: #2f5d8a;
+}
+
+.resume__nav {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding: 12px var(--gutter);
+  background: #2e3528;
+  color: #e8ecdf;
+}
+
+.resume__nav a {
+  color: #e8ecdf;
+}
+
+.resume__downloads {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.resume main {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 32px var(--gutter) 64px;
+}
+
+.resume h1 {
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.15;
+}
+
+.resume h2 {
+  margin: 32px 0 8px;
+  padding-bottom: 4px;
+  border-bottom: 2px solid #2e3528;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.resume h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.resume h3 span {
+  color: #5b5b55;
+  font-weight: normal;
+}
+
+.resume__title {
+  margin: 4px 0;
+  color: #4c5844;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.resume__contact {
+  margin: 0;
+  color: #5b5b55;
+  overflow-wrap: anywhere;
+}
+
+.resume__entry {
+  margin-bottom: 18px;
+}
+
+.resume__entry p,
+.resume__entry ul {
+  margin: 4px 0;
+}
+
+.resume__meta {
+  color: #6a6a63;
+  font-size: 13px;
+}
+
+.resume__skills {
+  margin: 0;
+}
+
+.resume__skills div {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 12px;
+  padding: 3px 0;
+}
+
+.resume__skills dt {
+  font-weight: 600;
+}
+
+.resume__skills dd {
+  margin: 0;
+}
+
+.resume__columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.resume__columns ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+@media (max-width: 640px) {
+  .resume__skills div,
+  .resume__columns {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .resume__columns {
+    gap: 0;
+  }
+}
+
+@media print {
+  .resume__nav {
+    display: none;
+  }
+
+  .resume {
+    background: #fff;
+  }
+
+  .resume main {
+    padding: 0;
+  }
+}
