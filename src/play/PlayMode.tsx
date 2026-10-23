@@ -10,27 +10,32 @@ import { portfolio } from '../data/portfolio';
 import { useStore } from '../state/context';
 import { downloadFile } from '../utils/download';
 import { asset } from '../utils/format';
-import { BOXES, inBuyZone, placeAt, SOLIDS, SPAWN, type Place, type SolidKind } from './map';
-import { createPlayer, PLAYER, step } from './physics';
+import { Hud } from './Hud';
+import { areaAt, BOXES, inBuyZone, placeAt, SOLIDS, SPAWN, type Place, type SolidKind } from './map';
+import { PLAYER, step } from './physics';
 import { Places } from './Places';
-
-/** Input state shared between DOM listeners and the render loop without re-rendering React. */
-interface Controls {
-  active: boolean;
-  keys: Set<string>;
-  yaw: number;
-  pitch: number;
-  jumpQueued: boolean;
-}
+import { Radar } from './Radar';
+import { createRuntime, KNIFE, RIFLE, type PlayRuntime, type WeaponId } from './runtime';
+import { Viewmodel } from './Viewmodel';
 
 /** Where the player stands, reported by the render loop only when it changes. */
 interface Status {
   place: Place | null;
   buyZone: boolean;
+  area: string;
+}
+
+interface HudState {
+  weapon: WeaponId;
+  ammo: number;
+  reserve: number;
+  reloading: boolean;
 }
 
 const SENSITIVITY = 0.0022;
 const MAX_PITCH = Math.PI / 2 - 0.01;
+/** Metres between footstep sounds while running (walking with Shift is silent, as in CS). */
+const STRIDE = 2.1;
 
 const COLORS: Record<Exclude<SolidKind, 'crate'>, string> = {
   wall: WALL,
@@ -83,41 +88,64 @@ function World() {
   );
 }
 
+const NO_KEYS = new Set<string>();
 const keyDown = (keys: Set<string>, ...codes: string[]) => (codes.some((c) => keys.has(c)) ? 1 : 0);
 
-function PlayerController({ controls, onStatus }: { controls: RefObject<Controls>; onStatus: (s: Status) => void }) {
+function PlayerController({ runtime, onStatus }: { runtime: RefObject<PlayRuntime>; onStatus: (s: Status) => void }) {
   const camera = useThree((s) => s.camera);
-  const player = useRef(createPlayer(SPAWN.x, SPAWN.z));
-  const last = useRef<Status>({ place: null, buyZone: true });
+  const last = useRef<Status>({ place: null, buyZone: true, area: 'T Spawn' });
+  const stride = useRef({ distance: 0, left: false });
 
   useEffect(() => {
-    // Dev-only: lets the browser tests teleport the player; stripped from builds.
-    if (import.meta.env.DEV) Object.assign(window, { __playPlayer: player.current });
-  }, []);
+    // Dev-only: lets the browser tests drive and teleport the player; stripped from builds.
+    if (import.meta.env.DEV) Object.assign(window, { __playControls: runtime.current, __playPlayer: runtime.current.player });
+  }, [runtime]);
 
   useFrame((_, delta) => {
-    const c = controls.current;
-    const keys = c.active ? c.keys : new Set<string>();
+    const rt = runtime.current;
+    const keys = rt.active ? rt.keys : NO_KEYS;
     const input = {
       forward: keyDown(keys, 'KeyW', 'ArrowUp') - keyDown(keys, 'KeyS', 'ArrowDown'),
       right: keyDown(keys, 'KeyD', 'ArrowRight') - keyDown(keys, 'KeyA', 'ArrowLeft'),
-      yaw: c.yaw,
+      yaw: rt.yaw,
       walk: keyDown(keys, 'ShiftLeft', 'ShiftRight') === 1,
-      jump: c.active && c.jumpQueued,
+      jump: rt.active && rt.jumpQueued,
     };
-    c.jumpQueued = false;
+    rt.jumpQueued = false;
 
+    const p = rt.player;
+    const wasGrounded = p.grounded;
+    let fallSpeed = 0;
     // Small substeps keep collisions stable when a frame takes long.
     const dt = Math.min(delta, 0.05);
     const steps = dt > 1 / 60 ? 2 : 1;
-    for (let i = 0; i < steps; i++) step(player.current, { ...input, jump: input.jump && i === 0 }, BOXES, dt / steps);
+    for (let i = 0; i < steps; i++) {
+      const vyBefore = p.vy;
+      const airborne = !p.grounded;
+      step(p, { ...input, jump: input.jump && i === 0 }, BOXES, dt / steps);
+      if (airborne && p.grounded) fallSpeed = Math.min(fallSpeed, vyBefore);
+    }
 
-    const p = player.current;
+    rt.speed = Math.hypot(p.vx, p.vz);
+    if (!wasGrounded && p.grounded && fallSpeed < -5) {
+      rt.landedAt = performance.now();
+      sfx.land();
+    }
+    if (p.grounded && !input.walk && rt.speed > 1.5) {
+      stride.current.distance += rt.speed * dt;
+      if (stride.current.distance > STRIDE) {
+        stride.current.distance = 0;
+        stride.current.left = !stride.current.left;
+        sfx.footstep(stride.current.left);
+      }
+    }
+
     camera.position.set(p.x, p.y + PLAYER.eye, p.z);
-    camera.rotation.set(c.pitch, c.yaw, 0, 'YXZ');
+    camera.rotation.set(rt.pitch, rt.yaw, 0, 'YXZ');
 
-    const status = { place: placeAt(p.x, p.z), buyZone: inBuyZone(p.x, p.z) };
-    if (status.place !== last.current.place || status.buyZone !== last.current.buyZone) {
+    const status = { place: placeAt(p.x, p.z), buyZone: inBuyZone(p.x, p.z), area: areaAt(p.x, p.z) };
+    const prev = last.current;
+    if (status.place !== prev.place || status.buyZone !== prev.buyZone || status.area !== prev.area) {
       last.current = status;
       onStatus(status);
     }
@@ -135,15 +163,20 @@ export default function PlayMode() {
   const [locked, setLocked] = useState(false);
   const [started, setStarted] = useState(false);
   const [lockError, setLockError] = useState(false);
-  const [status, setStatus] = useState<Status>({ place: null, buyZone: true });
+  const [status, setStatus] = useState<Status>({ place: null, buyZone: true, area: 'T Spawn' });
   const [flash, setFlash] = useState('');
-  const controls = useRef<Controls>({ active: false, keys: new Set(), yaw: SPAWN.yaw, pitch: 0, jumpQueued: false });
+  const runtime = useRef<PlayRuntime>(createRuntime());
+  const [hud, setHud] = useState<HudState>({ weapon: 'rifle', ammo: RIFLE.magazine, reserve: RIFLE.reserve, reloading: false });
   const statusRef = useRef(status);
   const playerName = useRef(state.settings.playerName);
+  // Windows and the connecting screen sit on top of the game; the pause menu waits behind them.
+  const windowOpen = state.stack.length > 0 || state.connecting !== null;
+  const windowOpenRef = useRef(windowOpen);
 
   useEffect(() => {
     playerName.current = state.settings.playerName;
-  }, [state.settings.playerName]);
+    windowOpenRef.current = windowOpen;
+  }, [state.settings.playerName, windowOpen]);
 
   const lock = () => {
     setLockError(false);
@@ -152,10 +185,11 @@ export default function PlayMode() {
   };
 
   const onStatus = (s: Status) => {
+    const enteredPickup = s.place !== statusRef.current.place && s.place?.action.kind === 'cv';
     statusRef.current = s;
     setStatus(s);
     // Walking into a CV pickup downloads it straight away; leaving and re-entering repeats it.
-    if (s.place?.action.kind === 'cv') {
+    if (enteredPickup && s.place?.action.kind === 'cv') {
       const lang = s.place.action.lang;
       const file = portfolio.contact.resumes.find((r) => r.lang === lang);
       if (!file) return;
@@ -175,54 +209,140 @@ export default function PlayMode() {
   };
 
   useEffect(() => {
+    const rt = runtime.current;
     let flashTimer = 0;
+    let reloadTimer = 0;
     const showFlash = (text: string) => {
       setFlash(text);
       clearTimeout(flashTimer);
       flashTimer = window.setTimeout(() => setFlash(''), 1800);
     };
+    const syncHud = () =>
+      setHud({ weapon: rt.weapon, ammo: rt.ammo, reserve: rt.reserve, reloading: performance.now() < rt.reloadUntil });
 
-    const c = controls.current;
-    // Dev-only hook so the render loop can be driven without pointer lock; stripped from builds.
-    if (import.meta.env.DEV) Object.assign(window, { __playControls: c });
+    const switchTo = (weapon: WeaponId) => {
+      if (weapon === rt.weapon) return;
+      rt.weapon = weapon;
+      rt.switchedAt = performance.now();
+      rt.reloadUntil = 0;
+      clearTimeout(reloadTimer);
+      sfx.draw();
+      syncHud();
+    };
+    const reload = () => {
+      const now = performance.now();
+      if (rt.weapon !== 'rifle' || rt.ammo >= RIFLE.magazine || rt.reserve === 0 || now < rt.reloadUntil) return;
+      rt.reloadUntil = now + RIFLE.reloadTime;
+      sfx.reload();
+      syncHud();
+      reloadTimer = window.setTimeout(() => {
+        if (rt.weapon !== 'rifle' || rt.reloadUntil === 0) return;
+        const take = Math.min(RIFLE.magazine - rt.ammo, rt.reserve);
+        rt.ammo += take;
+        rt.reserve -= take;
+        rt.reloadUntil = 0;
+        syncHud();
+      }, RIFLE.reloadTime);
+    };
+    const fire = () => {
+      const now = performance.now();
+      if (now - rt.switchedAt < 350) return;
+      if (rt.weapon === 'knife') {
+        if (now - rt.firedAt < KNIFE.swingDelay) return;
+        rt.firedAt = now;
+        sfx.knife();
+        return;
+      }
+      // A little tolerance so the auto-fire timer (which can fire a millisecond early) isn't rejected.
+      if (now < rt.reloadUntil || now - rt.firedAt < RIFLE.fireDelay - 20) return;
+      if (rt.ammo === 0) {
+        sfx.empty();
+        reload();
+        return;
+      }
+      rt.ammo -= 1;
+      rt.firedAt = now;
+      sfx.rifle();
+      syncHud();
+    };
+
     const onLockChange = () => {
       const isLocked = document.pointerLockElement === document.body;
-      c.active = isLocked;
-      c.keys.clear();
+      rt.active = isLocked;
+      rt.triggerHeld = false;
+      rt.keys.clear();
       setLocked(isLocked);
-      if (isLocked) setStarted(true);
+      if (isLocked) {
+        setStarted(true);
+        rt.switchedAt = performance.now(); // draw the weapon each time you come back
+        sfx.draw();
+      }
     };
     const onMouseMove = (e: MouseEvent) => {
-      if (!c.active) return;
-      c.yaw -= e.movementX * SENSITIVITY;
-      c.pitch = Math.max(-MAX_PITCH, Math.min(MAX_PITCH, c.pitch - e.movementY * SENSITIVITY));
+      if (!rt.active) return;
+      rt.yaw -= e.movementX * SENSITIVITY;
+      rt.pitch = Math.max(-MAX_PITCH, Math.min(MAX_PITCH, rt.pitch - e.movementY * SENSITIVITY));
+      rt.lookX += e.movementX;
+      rt.lookY += e.movementY;
+    };
+    // Holding the button keeps firing; fire() itself enforces the rate of fire.
+    let autoTimer = 0;
+    const onMouseDown = (e: MouseEvent) => {
+      if (!rt.active || windowOpenRef.current || e.button !== 0) return;
+      rt.triggerHeld = true;
+      fire();
+      clearInterval(autoTimer);
+      autoTimer = window.setInterval(() => {
+        if (!rt.triggerHeld || !rt.active || rt.weapon !== 'rifle') return clearInterval(autoTimer);
+        fire();
+      }, RIFLE.fireDelay);
+    };
+    const onMouseUp = (e: MouseEvent) => {
+      if (e.button === 0) rt.triggerHeld = false;
+    };
+    const onWheel = (e: WheelEvent) => {
+      if (rt.active && Math.abs(e.deltaY) > 0) switchTo(rt.weapon === 'rifle' ? 'knife' : 'rifle');
     };
     const onKeyDown = (e: KeyboardEvent) => {
-      if (!c.active) return;
+      if (!rt.active) return;
       if (['Space', 'Tab', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) e.preventDefault();
-      if (e.code === 'Space' && !e.repeat) c.jumpQueued = true;
-      if (e.code === 'KeyE' && !e.repeat) {
-        const place = statusRef.current.place;
-        if (place?.prompt) interact(place);
+      if (!e.repeat) {
+        if (e.code === 'Space') rt.jumpQueued = true;
+        if (e.code === 'KeyE') {
+          const place = statusRef.current.place;
+          if (place?.prompt) interact(place);
+        }
+        if (e.code === 'KeyB') {
+          if (statusRef.current.buyZone) interact({ id: 'buy-zone', x: 0, z: 0, radius: 0, action: { kind: 'window', window: 'skills' } });
+          else showFlash('You are not in a buy zone.');
+        }
+        if (e.code === 'Digit1') switchTo('rifle');
+        if (e.code === 'Digit3') switchTo('knife');
+        if (e.code === 'KeyQ') switchTo(rt.weapon === 'rifle' ? 'knife' : 'rifle');
+        if (e.code === 'KeyR') reload();
       }
-      if (e.code === 'KeyB' && !e.repeat) {
-        if (statusRef.current.buyZone) interact({ id: 'buy-zone', x: 0, z: 0, radius: 0, action: { kind: 'window', window: 'skills' } });
-        else showFlash('You are not in a buy zone.');
-      }
-      c.keys.add(e.code);
+      rt.keys.add(e.code);
     };
-    const onKeyUp = (e: KeyboardEvent) => c.keys.delete(e.code);
-    const onBlur = () => c.keys.clear();
+    const onKeyUp = (e: KeyboardEvent) => rt.keys.delete(e.code);
+    const onBlur = () => rt.keys.clear();
 
     document.addEventListener('pointerlockchange', onLockChange);
     document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mousedown', onMouseDown);
+    document.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('wheel', onWheel, { passive: true });
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('keyup', onKeyUp);
     window.addEventListener('blur', onBlur);
     return () => {
       clearTimeout(flashTimer);
+      clearTimeout(reloadTimer);
       document.removeEventListener('pointerlockchange', onLockChange);
       document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mousedown', onMouseDown);
+      document.removeEventListener('mouseup', onMouseUp);
+      clearInterval(autoTimer);
+      document.removeEventListener('wheel', onWheel);
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);
       window.removeEventListener('blur', onBlur);
@@ -239,9 +359,6 @@ export default function PlayMode() {
     trackEvent('play: start');
     actions.kill({ killer: state.settings.playerName, weapon: 'knife', victim: 'the main menu' });
   }, [started, actions, state.settings.playerName]);
-
-  // Windows and the connecting screen sit on top of the game; the pause menu waits behind them.
-  const windowOpen = state.stack.length > 0 || state.connecting !== null;
 
   return (
     <div className="play">
@@ -269,12 +386,17 @@ export default function PlayMode() {
         />
         <Sky />
         <World />
-        <PlayerController controls={controls} onStatus={onStatus} />
+        <PlayerController runtime={runtime} onStatus={onStatus} />
+        <Viewmodel runtime={runtime} />
       </Canvas>
 
       {locked && (
         <>
           <div className="play__crosshair" aria-hidden="true" />
+          <div className="play__radar-wrap">
+            <Radar runtime={runtime} />
+            <p className="play__area">{status.area}</p>
+          </div>
           {status.place?.prompt && (
             <p className="play__prompt" role="status">
               Press <kbd>E</kbd> to {status.place.prompt}
@@ -286,9 +408,9 @@ export default function PlayMode() {
               <span aria-hidden="true">$</span> Buy zone · <kbd>B</kbd> skills
             </p>
           )}
+          <Hud {...hud} />
           <p className="play__hint">
-            <kbd>WASD</kbd> move · <kbd>Shift</kbd> walk · <kbd>Space</kbd> jump · <kbd>E</kbd> use · <kbd>TAB</kbd> scoreboard ·{' '}
-            <kbd>Esc</kbd> pause
+            <kbd>E</kbd> use · <kbd>LMB</kbd> fire · <kbd>R</kbd> reload · <kbd>Q</kbd> switch · <kbd>TAB</kbd> scoreboard · <kbd>Esc</kbd> pause
           </p>
         </>
       )}
@@ -314,16 +436,23 @@ export default function PlayMode() {
                 <dt>Look</dt>
                 <dd>Mouse</dd>
                 <dt>Walk slowly</dt>
-                <dd>Shift</dd>
+                <dd>Shift (silent)</dd>
                 <dt>Jump</dt>
                 <dd>Space</dd>
                 <dt>Use</dt>
                 <dd>E · B in the buy zone</dd>
+                <dt>Fire / reload</dt>
+                <dd>Left click (hold for full-auto) · R</dd>
+                <dt>Weapons</dt>
+                <dd>1 rifle · 3 knife · Q or wheel to switch</dd>
                 <dt>Scoreboard</dt>
                 <dd>Hold TAB</dd>
                 <dt>Pause</dt>
                 <dd>Esc</dd>
               </dl>
+              <p className="hint play__credit">
+                Rifle and hands: <a href="https://opengameart.org/content/low-poly-fps-rifle-and-hands" target="_blank" rel="noreferrer">Low poly FPS rifle and hands</a> by Robin Lamb (CC0).
+              </p>
               {lockError && (
                 <p className="hint">The browser didn't capture the mouse. Click again (right after Esc it needs a second).</p>
               )}

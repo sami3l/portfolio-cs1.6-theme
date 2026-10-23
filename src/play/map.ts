@@ -180,6 +180,16 @@ export const BOXES: Box[] = SOLIDS.map(({ center: [x, y, z], size: [w, h, d] }) 
   max: [x + w / 2, y + h / 2, z + d / 2],
 }));
 
+/** Area name shown under the radar, like CS's location callouts. */
+export function areaAt(x: number, z: number) {
+  if (z > 17) return 'T Spawn';
+  if (z < -17 && x < -16) return 'Bombsite A';
+  if (z < -17 && x > 16) return 'Bombsite B';
+  if (z < -24) return 'Scoreboard';
+  if (Math.abs(x) > 15.5) return x < 0 ? 'Long A' : 'Long B';
+  return 'Main Street';
+}
+
 export const inBuyZone = (x: number, z: number) =>
   x >= BUY_ZONE.minX && x <= BUY_ZONE.maxX && z >= BUY_ZONE.minZ && z <= BUY_ZONE.maxZ;
 

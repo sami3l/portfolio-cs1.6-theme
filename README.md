@@ -12,7 +12,7 @@ Every part of the classic menu is a section of the portfolio:
 
 | In the game | In the portfolio |
 | --- | --- |
-| **Play** | Walk the portfolio as a first-person map, "de_career": projects are buildings and bombsites (press E to connect), the MOTD board, buy zone, scoreboard wall and radio cover the rest, and glowing crates hold the CV (desktop; `#play` or `map de_career`) |
+| **Play** | Walk the portfolio as a first-person map, "de_career", with a rifle and knife, radar, CS-style HUD and footsteps: projects are buildings and bombsites (press E to connect), the MOTD board, buy zone, scoreboard wall and radio cover the rest, and glowing crates hold the CV (desktop; `#play` or `map de_career`) |
 | **New Game** (message of the day) | About me, languages, interests and the "choose a team" shortcuts |
 | **Find Servers** | Projects: filter by tab or text, then connect to open a project's details, links and screenshots |
 | **Buy Menu** | Skills by category, with the projects and jobs where each one was used |
@@ -43,6 +43,10 @@ Every window has its own URL (`#projects/stratospend`, `#skills`…), so section
 - The rest of the artwork is original too: the fallback background and the map overview are inline SVG and the weapon icons are simple SVG paths. **No Valve assets are used**, and the sounds are synthesized with the Web Audio API.
 - [GoatCounter](https://www.goatcounter.com/) visit stats: cookie-free, no consent banner needed.
 - Deployed to GitHub Pages by GitHub Actions on every push to `main`.
+
+### Credits
+
+- First-person rifle and hands in Play mode: ["Low poly FPS rifle and hands"](https://opengameart.org/content/low-poly-fps-rifle-and-hands) by Robin Lamb, CC0. Everything else (map, knife, signs, sounds) is original to this project.
 
 ## Editing the content
 
