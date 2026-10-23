@@ -77,7 +77,7 @@ export const COMMANDS: Command[] = [
         projects.find((p) => p.id === q) ?? projects.find((p) => p.id.includes(q) || p.name.toLowerCase().includes(q));
       if (!project) return print({ text: `Server "${q}" not found. Type 'servers' for the list.`, kind: 'error' });
       print(`Connecting to ${project.name}…`);
-      actions.openProject(project.id);
+      actions.connect(project.id);
     },
   },
   { names: ['buy', 'skills'], help: 'Open the buy menu (skills)', run: opener('skills', 'Opening buy menu…') },

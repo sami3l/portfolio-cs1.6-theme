@@ -7,6 +7,8 @@ export type Action =
   | { type: 'toggle'; id: WindowId }
   | { type: 'closeTop' }
   | { type: 'openProject'; projectId: string }
+  | { type: 'connect'; projectId: string }
+  | { type: 'cancelConnect' }
   | { type: 'kill'; kill: Omit<Kill, 'id'> }
   | { type: 'expireKill'; id: number }
   | { type: 'settings'; patch: Partial<Settings> }
@@ -32,7 +34,17 @@ export function reducer(state: State, action: Action): State {
     case 'closeTop':
       return { ...state, stack: state.stack.slice(0, -1) };
     case 'openProject':
-      return { ...state, view: 'game', projectId: action.projectId, stack: withTop(state.stack, 'project') };
+      return {
+        ...state,
+        view: 'game',
+        connecting: null,
+        projectId: action.projectId,
+        stack: withTop(state.stack, 'project'),
+      };
+    case 'connect':
+      return { ...state, connecting: action.projectId };
+    case 'cancelConnect':
+      return { ...state, connecting: null };
     case 'kill': {
       const id = state.killSeq + 1;
       return { ...state, killSeq: id, kills: [...state.kills, { ...action.kill, id }].slice(-5) };
@@ -42,7 +54,7 @@ export function reducer(state: State, action: Action): State {
     case 'settings':
       return { ...state, settings: { ...state.settings, ...action.patch } };
     case 'view':
-      return { ...state, view: action.view, stack: action.view === 'game' ? state.stack : [] };
+      return { ...state, view: action.view, connecting: null, stack: action.view === 'game' ? state.stack : [] };
     case 'syncHash':
       return applyHash(state, action.hash);
   }
@@ -105,6 +117,14 @@ export function saveSettings(settings: Settings) {
 }
 
 export function initState(): State {
-  const base: State = { view: 'game', stack: [], projectId: null, kills: [], killSeq: 0, settings: loadSettings() };
+  const base: State = {
+    view: 'game',
+    stack: [],
+    projectId: null,
+    connecting: null,
+    kills: [],
+    killSeq: 0,
+    settings: loadSettings(),
+  };
   return applyHash(base, location.hash.slice(1));
 }

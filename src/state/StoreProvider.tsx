@@ -14,6 +14,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       toggle: (id) => dispatch({ type: 'toggle', id }),
       closeTop: () => dispatch({ type: 'closeTop' }),
       openProject: (projectId) => dispatch({ type: 'openProject', projectId }),
+      connect: (projectId) => dispatch({ type: 'connect', projectId }),
+      cancelConnect: () => dispatch({ type: 'cancelConnect' }),
       kill: ({ team = 'ct', ...kill }) => dispatch({ type: 'kill', kill: { ...kill, team } }),
       expireKill: (id) => dispatch({ type: 'expireKill', id }),
       setSettings: (patch) => dispatch({ type: 'settings', patch }),

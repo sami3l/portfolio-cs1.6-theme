@@ -6,8 +6,8 @@ import { KillFeed } from './hud/KillFeed';
 import { useStore } from './state/context';
 import { StoreProvider } from './state/StoreProvider';
 import { Goodbye } from './views/Goodbye';
-import { shouldShowLoading } from './utils/loading';
-import { LoadingScreen } from './views/LoadingScreen';
+import { markSeen, shouldShowLoading } from './utils/loading';
+import { ConnectLoading, IntroLoading } from './views/LoadingScreen';
 import { Resume } from './views/Resume';
 import { WindowLayer } from './windows/WindowLayer';
 
@@ -26,6 +26,10 @@ function Game() {
   useHotkeys();
 
   useEffect(() => {
+    if (loading) markSeen();
+  }, [loading]);
+
+  useEffect(() => {
     if (greeted.current) return;
     greeted.current = true;
     actions.kill({ killer: state.settings.playerName, weapon: 'knife', victim: 'boredom' });
@@ -40,7 +44,8 @@ function Game() {
       <MainMenu />
       <WindowLayer />
       <KillFeed />
-      {loading && <LoadingScreen onDone={() => setLoading(false)} />}
+      {loading && <IntroLoading onDone={() => setLoading(false)} />}
+      {!loading && state.connecting && <ConnectLoading />}
       <footer className="desktop__footer">
         <span className="desktop__keys">
           Hold <kbd>TAB</kbd> scoreboard · <kbd>B</kbd> buy menu · <kbd>~</kbd> console · <kbd>Esc</kbd> close

@@ -45,7 +45,7 @@ export function ServerBrowser() {
   };
 
   const onRowKeyDown = (e: KeyboardEvent<HTMLTableRowElement>, project: Project) => {
-    if (e.key === 'Enter') actions.openProject(project.id);
+    if (e.key === 'Enter') actions.connect(project.id);
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.preventDefault();
       const next = e.key === 'ArrowDown' ? e.currentTarget.nextElementSibling : e.currentTarget.previousElementSibling;
@@ -67,7 +67,7 @@ export function ServerBrowser() {
           <Button onClick={refresh} disabled={refreshing}>
             Refresh
           </Button>
-          <Button onClick={() => selected && actions.openProject(selected)} disabled={!selected}>
+          <Button onClick={() => selected && actions.connect(selected)} disabled={!selected}>
             Connect
           </Button>
         </>
@@ -110,7 +110,7 @@ export function ServerBrowser() {
                     key={p.id}
                     tabIndex={0}
                     aria-selected={selected === p.id}
-                    onClick={() => (selected === p.id ? actions.openProject(p.id) : setSelected(p.id))}
+                    onClick={() => (selected === p.id ? actions.connect(p.id) : setSelected(p.id))}
                     onFocus={() => setSelected(p.id)}
                     onKeyDown={(e) => onRowKeyDown(e, p)}
                   >

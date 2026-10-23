@@ -34,6 +34,8 @@ export interface State {
   /** Open windows, bottom to top. The last one has focus. */
   stack: WindowId[];
   projectId: string | null;
+  /** Project whose "connecting to server" screen is showing, before its window opens. */
+  connecting: string | null;
   kills: Kill[];
   killSeq: number;
   settings: Settings;
@@ -45,6 +47,9 @@ export interface Actions {
   toggle: (id: WindowId) => void;
   closeTop: () => void;
   openProject: (projectId: string) => void;
+  /** Shows the connecting screen, then opens the project. Use for user-initiated opens. */
+  connect: (projectId: string) => void;
+  cancelConnect: () => void;
   kill: (kill: Omit<Kill, 'id' | 'team'> & { team?: Team }) => void;
   expireKill: (id: number) => void;
   setSettings: (patch: Partial<Settings>) => void;
