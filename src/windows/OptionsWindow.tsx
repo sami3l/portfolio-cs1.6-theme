@@ -7,6 +7,7 @@ import { Window } from '../components/vgui/Window';
 import { portfolio } from '../data/portfolio';
 import { useStore, type Settings } from '../state/context';
 import { prettyUrl } from '../utils/format';
+import { sceneSupport } from '../utils/scene';
 
 type Tab = 'contact' | 'multiplayer' | 'audio';
 
@@ -21,6 +22,7 @@ export function OptionsWindow() {
   const { state, actions } = useStore();
   const [tab, setTab] = useState<Tab>('contact');
   const [status, setStatus] = useState('');
+  const [scene] = useState(sceneSupport);
   const { contact } = portfolio;
 
   const copyEmail = async () => {
@@ -119,6 +121,7 @@ export function OptionsWindow() {
               />
               <span>3D background (desktop)</span>
             </label>
+            {scene.note && <p className="hint">{scene.note}</p>}
             <label className="form-row">
               <span>Theme</span>
               <select
@@ -130,7 +133,6 @@ export function OptionsWindow() {
                 <option value="dark">Dark</option>
               </select>
             </label>
-            <p className="hint">Animations follow your system's reduced-motion setting.</p>
           </div>
         )}
       </Tabs>

@@ -1,21 +1,10 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { useStore } from '../state/context';
-import { isMobile } from '../utils/format';
+import { sceneSupport } from '../utils/scene';
 import { ErrorBoundary } from './ErrorBoundary';
 
 // Three.js is only downloaded when the 3D scene is actually used.
 const Scene3D = lazy(() => import('./scene/Scene3D'));
-
-/** Desktop, motion allowed, and WebGL available. Everyone else keeps the SVG scene. */
-function canUse3D() {
-  if (isMobile() || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
-  try {
-    const canvas = document.createElement('canvas');
-    return Boolean(canvas.getContext('webgl2') || canvas.getContext('webgl'));
-  } catch {
-    return false;
-  }
-}
 
 /**
  * An original desert-town scene in the spirit of de_dust (no game textures), split into
@@ -24,9 +13,9 @@ function canUse3D() {
 export function Background() {
   const { state } = useStore();
   const ref = useRef<HTMLDivElement>(null);
-  const [supported] = useState(canUse3D);
+  const [support] = useState(sceneSupport);
   const [ready, setReady] = useState(false);
-  const use3D = supported && state.settings.scene3d;
+  const use3D = support.available && state.settings.scene3d;
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -118,7 +107,7 @@ export function Background() {
         <ErrorBoundary>
           <Suspense fallback={null}>
             <div className={`bg3d ${ready ? 'is-ready' : ''}`}>
-              <Scene3D onReady={() => setReady(true)} />
+              <Scene3D still={support.still} onReady={() => setReady(true)} />
             </div>
           </Suspense>
         </ErrorBoundary>

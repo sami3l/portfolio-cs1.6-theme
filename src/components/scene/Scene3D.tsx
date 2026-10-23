@@ -285,9 +285,11 @@ function mulberry32(seed: number) {
   };
 }
 
-export default function Scene3D({ onReady }: { onReady: () => void }) {
+/** `still` (reduced motion): render a single frame, with no camera drift or moving dust. */
+export default function Scene3D({ still, onReady }: { still: boolean; onReady: () => void }) {
   return (
     <Canvas
+      frameloop={still ? 'demand' : 'always'}
       shadows
       dpr={[1, 1.75]}
       camera={{ fov: 45, position: [0, 2.4, 14], near: 0.1, far: 200 }}
