@@ -33,6 +33,20 @@ On desktop the menu sits on a **3D desert town** built with Three.js (with an SV
 | `1`–`9`, `0` | Pick items in the buy menu and team select; `0` goes back |
 | `Esc` | Close the top window, or cancel a connection |
 
+In **Play mode** (desktop, click to capture the mouse; the controls are shown once when you start):
+
+| Key | Action |
+| --- | --- |
+| `W` `A` `S` `D` / arrows | Move (`Shift` walks silently) |
+| Mouse | Look |
+| `Space` | Jump |
+| `E` | Use the place you stand at: open a project, the MOTD, the scoreboard, the radio. Closing the window puts you back in the game |
+| `B` | Skills, in the buy zone at spawn |
+| Left click / `R` | Fire (hold for full-auto) / reload |
+| `1`, `3`, `Q`, wheel | Rifle, knife, switch weapons |
+| Hold `TAB` | Scoreboard |
+| `Esc` | Pause; click anywhere to resume |
+
 Every window has its own URL (`#projects/stratospend`, `#skills`…), so sections can be linked to directly, and the browser's back button closes windows. On phones, windows open full-screen and everything works by touch.
 
 ## Tech
@@ -80,6 +94,7 @@ src/
   data/          portfolio.ts (all content) and its types
   components/    VGUI primitives (Window, Button, Tabs), menu, background, map overview, icons
   components/scene/  the Three.js menu scene (lazy-loaded)
+  play/          Play mode: map layout, hand-written player physics, viewmodel, radar, HUD
   windows/       one component per window: MOTD, server browser, buy menu…
   hud/           console and kill feed
   console/       console command registry
