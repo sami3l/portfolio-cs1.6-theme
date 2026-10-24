@@ -352,6 +352,17 @@ export default function PlayMode() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Closing a window you opened with E puts you straight back in the game. Closing it with a
+  // click counts as a user gesture, so the browser allows the re-capture; after Esc it doesn't,
+  // and the "Click to resume" layer is there instead.
+  const hadWindow = useRef(windowOpen);
+  useEffect(() => {
+    if (hadWindow.current && !windowOpen && started && !document.pointerLockElement) {
+      Promise.resolve(document.body.requestPointerLock()).catch(() => {});
+    }
+    hadWindow.current = windowOpen;
+  }, [windowOpen, started]);
+
   const greeted = useRef(false);
   useEffect(() => {
     if (!started || greeted.current) return;
@@ -415,21 +426,38 @@ export default function PlayMode() {
         </>
       )}
 
-      {!locked && !windowOpen && (
+      {!locked && !windowOpen && started && (
+        // After the first start, pausing (or a failed re-capture) only needs a click to carry on.
+        <div className="play__resume" onClick={lock}>
+          <p className="play__resume-text">
+            Click to resume
+            {lockError && <span className="hint">The browser needs a second after Esc. Click again.</span>}
+          </p>
+          <Button
+            className="play__resume-menu"
+            onClick={(e) => {
+              e.stopPropagation();
+              actions.setView('game');
+            }}
+          >
+            Back to menu
+          </Button>
+        </div>
+      )}
+
+      {!locked && !windowOpen && !started && (
         <div className="play__overlay">
           <section className="vgui-window is-focused play__dialog" aria-labelledby="play-title">
             <header className="vgui-titlebar">
               <h2 id="play-title" className="vgui-titlebar__title">
-                {started ? 'Paused' : 'de_career'}
+                de_career
               </h2>
             </header>
             <div className="vgui-body">
-              {!started && (
-                <p>
-                  Walk around the portfolio. Projects are buildings and bombsites, the scoreboard is on the far wall, and the
-                  radio at spawn gets you in touch. Grab a glowing crate for my CV.
-                </p>
-              )}
+              <p>
+                Walk around the portfolio. Projects are buildings and bombsites, the scoreboard is on the far wall, and the
+                radio at spawn gets you in touch. Grab a glowing crate for my CV.
+              </p>
               <dl className="play__controls">
                 <dt>Move</dt>
                 <dd>W A S D (or the arrow keys)</dd>
@@ -460,7 +488,7 @@ export default function PlayMode() {
             <footer className="vgui-footer">
               <Button onClick={() => actions.setView('game')}>Back to menu</Button>
               <Button autoFocus onClick={lock}>
-                {started ? 'Resume' : 'Play'}
+                Play
               </Button>
             </footer>
           </section>
