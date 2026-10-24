@@ -131,6 +131,14 @@ export const COMMANDS: Command[] = [
     },
   },
   {
+    names: ['play'],
+    help: 'Switch to Play mode',
+    run: (_args, { actions, print }) => {
+      actions.setView('play');
+      print('Switching to Play mode…');
+    },
+  },
+  {
     names: ['volume'],
     usage: '<0|1>',
     help: 'Turn UI sounds off or on',
